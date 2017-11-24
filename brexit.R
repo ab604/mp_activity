@@ -110,23 +110,23 @@ save(clauses,file = "clauses.RData")
 #               `Schedule  8`= "Consequential, transitional, transitory and saving provision",
 #               `Schedule  9`= "Additional repeals")
 
-clause_sub <- c("Corresponding powers involving devolved authorities",
-                "Retaining EU restrictions in devolution legislation etc.",
-                "Financial provision",
-                "Publication and rules of evidence",
-                "Interpretation",
-                "Consequential and transitional provision",
-                "Exceptions to savings and incorporation",
-                "Dealing with deficiencies arising from withdrawal",
-                "Complying with international obligations",
-                "Implementing the withdrawal agreement",
-                "Further provision about exceptions to savings and incorporation", 
-                "Corresponding powers involving devolved authorities",
-                "Further amendments of devolution legislation",
-                "Powers in connection with fees and charges",
-                "Publication and rules of evidence",
-                "Regulations",
-                "Consequential, transitional, transitory and saving provision")
+clause_sub <- c("S1:Corresponding powers involving devolved authorities",
+                "C11:Retaining EU restrictions in devolution legislation etc.",
+                "C12:Financial provision",
+                "S5:Publication and rules of evidence",
+                "C14:Interpretation",
+                "C17:Consequential and transitional provision",
+                "C5:Exceptions to savings and incorporation",
+                "C7:Dealing with deficiencies arising from withdrawal",
+                "C8:Complying with international obligations",
+                "C9:Implementing the withdrawal agreement",
+                "S3:Further provision about exceptions to savings and incorporation", 
+                "S2:Corresponding powers involving devolved authorities",
+                "S3:Further amendments of devolution legislation",
+                "S4:Powers in connection with fees and charges",
+                "C13:Publication and rules of evidence",
+                "S7:Regulations",
+                "S8:Consequential, transitional, transitory and saving provision")
 
 
 
