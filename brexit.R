@@ -7,6 +7,7 @@ library(stringr)
 library(plotly)
 library(forcats)
 library(tidytext)
+library(RColorBrewer)
 
 #.paraProposerName3-only nobr , .paraProposerName2-only nobr , .paraProposerName1-only nobr , .paraProposerName-only nobr
 # .paraAmedTextCommitReport-only nobr
