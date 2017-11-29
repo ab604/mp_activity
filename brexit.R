@@ -195,6 +195,11 @@ b.plot <- brexit_complete %>%
         facet_grid(~ Party)
 b.plot
 
+#l <- plotly_build(b.plot)
+#l$data[[1]]$orientation <- "h"
+#l$data[[2]]$orientation <- "h"
+l
+
 b.plot.2 <- brexit_complete %>%
         filter(Party == "Conservative") %>% 
         arrange(desc(Ammendments)) %>%
@@ -260,3 +265,8 @@ ggplot(aes(fct_reorder(clause_count, n),n, fill = Cl_name)) +
         theme(legend.title=element_blank()) 
 
 c.plot
+
+#cl <- ggplotly(c.plot)
+#cl$data[[1]]$orientation <- "h"
+#l$data[[2]]$orientation <- "h"
+#cl
