@@ -57,7 +57,7 @@ brexit_list <- map(1:length(urls), function(i) {
 
 save(brexit_list,file = "brexit_list.RData")
 
-# Get clauses only -------------------------------------------------------------
+# Get amendment numbers only ---------------------------------------------------
 amend_no <- ".paraAmendmentNumber-only nobr , .paraHeader2-only nobr"
 
 amends <- map_df(1:length(urls), function(i) {
@@ -93,13 +93,15 @@ mp_amends_df <- map_df(1:length(urls), function(i) {
 
 # Creat df with MP names and the amendments to existing clauses they've tabled 
 # or supported
-mp_amends_df <- mp_amends_df %>% unnest(Amend_number) %>% 
-        filter(grepl("^\\d",Amend_number,perl = T)) %>%
-        mutate(Amend_number = as.numeric(Amend_number)) %>% 
-        arrange(desc(Amend_number))
+mp_amends_df <- mp_amends_df %>% unnest(Amend_number) #%>% 
+        #filter(grepl("^\\d",Amend_number,perl = T)) %>%
+        # mutate(Amend_number = as.numeric(Amend_number)) #%>% 
+        # arrange(desc(Amend_number))
 
-mp_amends_df %>% group_by(MP) %>% 
-        tally()
+mp_amends_df <- mp_amends_df %>% 
+  mutate(MP = str_trim(mp_amends_df$MP, "both"))
+
+unique(mp_amends_df$Amend_number)
 # Unlist the data --------------------------------------------------------------
 # Create a table of MP names and clauses
 brexit_df <- map_df(1:length(urls), function(i) {
@@ -141,10 +143,51 @@ mp_details <- map_df(1:33, function(i) {
 
 #save(mp_details,file = "mp_details.RData")
 
-# Join MP information ----------------------------------------------------------
-mp_brexit_join <- brexit_df %>% left_join(mp_details)
-mp_brexit_missing <- mp_brexit_join %>% filter(is.na(mp_brexit_join$Party)) %>% distinct(MP)
-mp_brexit_missing_parties <- c("Labour","Labour","Labour (Co-op)",
-                     "Scottish National Party",
-                     "Conservative","Liberal Democrat")
-mp_brexit_missing$Party <- mp_brexit_missing_parties
+# Create unified list of MPs details -------------------------------------------
+mp_tabled <- mp_amends_df %>% distinct(MP)
+
+mp_join <- mp_details %>% right_join(mp_tabled)
+
+missing_mps <- which(is.na(mp_join[,2]))
+mp_join[missing_mps,]
+
+mp_join$Party[mp_join$MP == "Secretary David Davis"] <- "Conservative"
+mp_join$Party[mp_join$MP == "Gavin Shuker"] <- "Labour"
+mp_join$Party[mp_join$MP == "Pat McFadden"] <- "Labour"
+mp_join$Party[mp_join$MP == "Alistair Carmichael"] <- "Liberal Democrat"
+mp_join$Party[153] <- "Scottish National Party"
+mp_join$Party[mp_join$MP == "Paul Farrell"] <- "Labour"
+
+
+# Add Party to tables ----------------------------------------------------------
+brexit_join <- brexit_df %>% left_join(mp_join)
+mp_amends_join <- mp_amends_df %>% left_join(mp_join)
+
+mp_amends_join %>% filter(is.na(Party))
+brexit_join %>% filter(is.na(Party))
+
+# Plot data --------------------------------------------------------------------
+parties <- unique(brexit_join$Party)
+party_colours <- c(Conservative = "#003d6d",
+                   `Scottish National Party` = "#f5822a", 
+                   `Green Party` = "#83de62", 
+                   Labour = "#e23a3f",
+                   `Labour (Co-op)` = "#e23a3f",
+                   `Liberal Democrat` = "#ffac12", 
+                   `Plaid Cymru`= "#5a5101", 
+                   Independent = "#cccccc")
+
+# Plot number of amendments tabled or supported per MP 
+mp_amends_join %>% 
+  group_by(Party,MP) %>% 
+  summarise(count = n()) %>% 
+  filter(count > 10) %>% 
+  ggplot(aes(fct_reorder(MP, count),count, fill = Party)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = party_colours) +
+  xlab("MP") +
+  ylab("Number of amendments tabled or supported") +
+  coord_flip() +
+  theme_minimal() +
+  facet_grid(~ Party)
+
